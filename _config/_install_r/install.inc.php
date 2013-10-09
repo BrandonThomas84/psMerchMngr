@@ -253,7 +253,7 @@ class install {
 			</div>";
 	}
 	private function userCheckForFormSubmit(){
-		if(isset($_POST["createUser"])){
+		if(isset($_POST["password"])){
 			if($_POST["password"] !== $_POST["password2"]){
 				messageReporting::insertMessage("error","The two passwords you entered do not match. Please try again.");
 			} else {self::insertFirstUser();}

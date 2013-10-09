@@ -9,7 +9,7 @@ class availability extends feedFunction {
 		$outstock = 'out of stock';
 		
 		return "(case when (`A`.`quantity` > 0) then '" . $instock . "' when ((`A`.`quantity` = 0) or isnull(`A`.`quantity`)) then '" . $outstock . "' else '" . $outstock . "' end)"; 
-		array_push(feedFrom::$inc,array("A",""));
+		
 	}
 	public static function includeTables(){
 		$a = array("A","");
