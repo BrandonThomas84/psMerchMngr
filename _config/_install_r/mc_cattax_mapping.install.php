@@ -12,7 +12,7 @@ class mc_cattax_mapping extends tableInstall {
 		  `cattax_merchant_id` varchar(50) NOT NULL,
 		  PRIMARY KEY (`id`,`category_string`,`cattax_merchant_id`),
 		  UNIQUE KEY `idmc_cattax_conversion_UNIQUE` (`id`)
-		)ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;";
+		)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;";
 	}
 }
 

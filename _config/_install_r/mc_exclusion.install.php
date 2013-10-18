@@ -11,7 +11,7 @@ class mc_exclusion extends tableInstall {
 		  `exclusion` varchar(100) NOT NULL,
 		  PRIMARY KEY (`id`,`id_product`,`exclusion`),
 		  UNIQUE KEY `id_UNIQUE` (`id`)
-		)ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;";
+		)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;";
 	}
 }
 

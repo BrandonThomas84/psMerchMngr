@@ -818,3 +818,51 @@ div#existing-overrides{
     right: 0px; 
 }
 
+/* HELP */
+.help-modal {
+  background: #87CEEB;
+  font-size: 16px;
+  border: 4px solid #fff;
+  border-radius: 14px;
+}
+.help-modal-head {
+  font-size: 26px;
+  line-height: 1;
+}
+.help-modal-body {
+  background: #AAAAFF;
+}
+.help-modal-footer {
+  margin-top: 0;
+}
+.help-modal-head .close {
+  background: #fff;
+  color: #000;
+}
+.help-button {
+  background: #428bca;
+  background-image: -webkit-gradient(linear, left 0%, left 100%, from(#428bca), to(#1a3750));
+  background-image: -webkit-linear-gradient(top, #428bca, 0%, #1a3750, 100%);
+  background-image: -moz-linear-gradient(top, #428bca 0%, #1a3750 100%);
+  background-image: linear-gradient(to bottom, #428bca 0%, #1a3750 100%);
+  height: 32px;
+  width: 32px;
+  display: inline-block;
+  position: relative;
+  color: #fff;
+  border-radius: 17px;
+  padding: 0 0 0 8px;
+  font-size: 20px;
+  font-weight: bold;
+  border: 3px solid #fff;
+}
+.help-button:hover {
+  color: #a0c5e4;
+  text-decoration: none;
+}
+.help-modal-body img {
+  width: 100%;
+  padding: 5px;
+  border: 2px solid #fff;
+  background: #efefef;
+}

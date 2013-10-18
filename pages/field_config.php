@@ -1,4 +1,4 @@
-<?php /* FILEVERSION: v1.0.1b */ ?>
+<?php /* FILEVERSION: v1.0.2b */ ?>
 <?php
 
 //instatntiating primary classes
@@ -22,7 +22,7 @@ echo "
 			<div class=\"col-sm-12 navbar-form\">
 				<div class=\"col-sm-3 form-group\">
 					<div class=\"onoffswitch\">
-					    <input type=\"checkbox\" name=\"enabled\" class=\"onoffswitch-checkbox form-control btn\" id=\"myonoffswitch\" " . feedConfigChecked($fieldData->enabled) . $fieldData->editable . ">
+					    <input type=\"checkbox\" name=\"enabled\" class=\"onoffswitch-checkbox form-control btn\" id=\"myonoffswitch\" " . feedConfigChecked($fieldData->enabled) . ">
 					    <label class=\"onoffswitch-label\" for=\"myonoffswitch\">
 					        <div class=\"onoffswitch-inner\"></div>
 					        <div class=\"onoffswitch-switch\"></div>

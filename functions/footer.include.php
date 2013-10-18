@@ -1,4 +1,4 @@
-<?php /* FILEVERSION: v1.0.1b */ ?>
+<?php /* FILEVERSION: v1.0.2b */ ?>
 
 
 <!-- Bootstrap core JavaScript
@@ -14,6 +14,10 @@
 //display bug submission modal code
 	echo $bugs->bugModal();
 
+$help = new help;
+
+echo $help->helpModals();
 ?>
+
 </body>
 </html>

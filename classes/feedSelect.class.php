@@ -1,4 +1,4 @@
-<?php /* FILEVERSION: v1.0.1b */ ?>
+<?php /* FILEVERSION: v1.0.2b */ ?>
 <?php
 class feedSelect{
 	public static function sql(){
@@ -68,7 +68,15 @@ class feedSelect{
 						}
 					} else {
 						$value = $row["custom_function"]::includeTables();
-						array_push($tables,$value);
+
+						//checking if the returned value is a nested array of tables (multiple tables)
+						if(count($value)>2){
+							foreach($value AS $value){
+								array_push($tables,$value);
+							}
+						} else {
+							array_push($tables,$value);
+						}
 					}
 				}
 			}

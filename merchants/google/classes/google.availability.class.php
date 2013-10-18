@@ -1,4 +1,4 @@
-<?php /* FILEVERSION: v1.0.1b */ ?>
+<?php /* FILEVERSION: v1.0.2b */ ?>
 <?php
 class availability extends feedFunction {
 	

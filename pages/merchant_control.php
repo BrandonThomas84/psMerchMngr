@@ -1,4 +1,4 @@
-<?php /* FILEVERSION: v1.0.1b */ ?>
+<?php /* FILEVERSION: v1.0.2b */ ?>
 <?php 
 require("functions/merchant_control_functions.php");
 ////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ if(isset($_GET["fieldID"])){
 	echo "
 	<div class=\"container well\">
 		<div class=\"section-head\">
-			<h2>Functions</h2>
+			<h2>Functions</h2>" .  help::createButton("merchantFunctions") . "
 		</div>
 		<div class=\"btn-toolbar\">
 			<div class=\"feed-field col-lg-3\">
@@ -55,7 +55,7 @@ if(isset($_GET["fieldID"])){
 		</div>
 		<br>
 		<div class=\"section-head\">
-			<h2>Rules</h2>
+			<h2>Rules</h2>" .  help::createButton("merchantRules") . "
 		</div>
 		<div class=\"feed-field col-lg-4\">
 			<form action=\"index.php?f=" . _MERCH_ . "&p=exmng\" method=\"post\">
@@ -73,7 +73,7 @@ if(isset($_GET["fieldID"])){
 		<div class=\"clearfix\"></div>
 		<br>
 		<div class=\"section-head\">
-			<h2>Field Configuration</h2>
+			<h2>Field Configuration</h2>" .  help::createButton("merchantFieldConfiguration") . "
 		</div>
 		<div class=\"clearfix\"></div> ";
 

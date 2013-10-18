@@ -17,7 +17,7 @@ class mc_taxonomy extends tableInstall {
 		  `level7` varchar(255) DEFAULT NULL,
 		  PRIMARY KEY (`id`),
 		  UNIQUE KEY `id_UNIQUE` (`id`)
-		)ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;";
+		)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;";
 	}
 
 	public static function populate(){

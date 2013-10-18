@@ -1,4 +1,4 @@
-<?php /* FILEVERSION: v1.0.1b */ ?>
+<?php /* FILEVERSION: v1.0.2b */ ?>
 <?php
 //default functions for Google
 class default_functions{
@@ -26,6 +26,15 @@ class default_functions{
     }
     public static function imgTables(){
         $a = array(
+                array("Imgs",1),
+                array("Imgs",2),
+                array("Imgs",3),
+                array("Imgs",4),
+                array("Imgs",5),
+                array("Imgs",6),
+                array("Imgs",7),
+                array("Imgs",8),
+                array("Imgs",9),
                 array("Imgs",10)
             );
         return $a;

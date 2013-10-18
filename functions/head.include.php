@@ -1,4 +1,4 @@
-<?php /* FILEVERSION: v1.0.1b */ ?>
+<?php /* FILEVERSION: v1.0.2b */ ?>
 <!doctype html>
 <html><head>
 
@@ -9,10 +9,11 @@
 <meta name="robots" content="NOINDEX,NOFOLLOW"/>
 <!-- Bootstrap -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="css/bootstrap-responsive.css" rel="stylesheet">
-<link href="css/bootstrap.css" rel="stylesheet">
-<link href="css/bootstrap-theme.css" rel="stylesheet">
-<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+<link href="css/merch-mngr-responsive.css" rel="stylesheet">
+<link href="css/merch-mngr.css" rel="stylesheet">
+<link href="css/merch-mngr-theme.css" rel="stylesheet">
+<!--linking font package-->
+<link href='css/raleway.css' rel='stylesheet' type='text/css'>
 
 <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!--[if lt IE 9]>

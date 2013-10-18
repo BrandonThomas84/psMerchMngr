@@ -12,7 +12,7 @@ class mc_overrides extends tableInstall {
 		  `override_value` varchar(255) DEFAULT NULL,
 		  PRIMARY KEY (`merchant_id`,`id_product`,`override_type`),
 		  UNIQUE KEY `id_UNIQUE` (`id`)
-		) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;";
+		) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;";
 	}
 }
 

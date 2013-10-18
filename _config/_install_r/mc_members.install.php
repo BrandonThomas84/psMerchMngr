@@ -13,7 +13,7 @@ class mc_members extends tableInstall {
 		  `salt` char(128) NOT NULL,
 		  `perm_level` VARCHAR(45) NOT NULL,
 		  PRIMARY KEY (`id`)
-		)ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;";
+		)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;";
 	}
 }
 

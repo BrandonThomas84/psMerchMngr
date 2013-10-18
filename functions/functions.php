@@ -187,6 +187,8 @@ function tableLettertoFriendly($table){
     if($table == "img6"){ return "Additional Images 6";}
     if($table == "img7"){ return "Additional Images 7";}
     if($table == "img8"){ return "Additional Images 8";}
+    if($table == "img9"){ return "Additional Images 9";}
+    if($table == "img10"){ return "Additional Images 10";}
     if($table == "feat"){ return "Mapped to Feature";}
     if($table == "cur"){ return "Currency";}
 }
@@ -234,7 +236,7 @@ if(isset($_GET["p"])){
 ////////////////////////////////////////////////////////////////////////
 //create query portion - "where"
 function reportQueryWhere(){
-	return " WHERE (`A`.`active` = 1) AND (`A`.`available_for_order` = 1) AND (`A`.`id_product` NOT IN (SELECT `id_product` FROM `" . _DB_NAME_ . "`.`mc_exclusion` WHERE `exclusion` = '" . _MERCHANTID_ . "'))";
+	return " WHERE (`A`.`active` = 1) AND (`A`.`available_for_order` = 1) AND (`A`.`id_product` NOT IN (SELECT DISTINCT `id_product` FROM `" . _DB_NAME_ . "`.`mc_exclusion` WHERE `exclusion` = '" . _MERCHANTID_ . "'))";
 }
 function getAttrGroups(){
 	$sql = "SELECT DISTINCT `public_name` AS `group` FROM  `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute_group_lang`";
@@ -319,4 +321,57 @@ function callAllMerchantClassDefaults($merchant){
 
 	return $a;
 }
+
+function checkAttributes(){
+		//creating output array
+		$qA = array();
+		
+		//getting all group names
+		$query = mysql_query(getAttrGroups());
+		
+		//create a new select for each group name
+		while($row = mysql_fetch_array($query)){
+			$queryPart = "SELECT DISTINCT `b`.`id_product`,
+	                `d`.`name` AS `" . $row["group"] . "`,
+	                `b`.`price` AS `attr_price`,
+	                `b`.`weight` AS `attr_weight`,
+	                CONCAT(`f`.`public_name`,': ',`d`.`name`) AS `title_addition`,
+	                CONCAT(`f`.`id_attribute_group`,`b`.`id_product_attribute`) AS `id_product_ext`,
+	                a.*,
+					b.*,
+					c.*,
+					d.*,
+					e.*,
+					f.*
+				FROM `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "product_attribute_combination` AS `a`
+				INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "product_attribute` AS `b` ON `a`.`id_product_attribute` = `b`.`id_product_attribute`
+				INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute` AS `c` ON `a`.`id_attribute` = `c`.`id_attribute`
+				INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute_lang` AS `d` ON `c`.`id_attribute` = `d`.`id_attribute`
+				INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute_group` AS `e` ON `c`.`id_attribute_group` = `e`.`id_attribute_group`
+				INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute_group_lang` AS `f` ON `e`.`id_attribute_group` = `f`.`id_attribute_group`
+				WHERE (`f`.`public_name` = '" . $row["group"] . "')
+				  AND (`b`.`available_date` < CURRENT_TIMESTAMP
+				       OR `b`.`available_date` = 0000-00-00)";
+			
+			//adding to mass select array
+			array_push($qA,$queryPart);
+		}
+
+		//imploding updated query
+		$sql = mysql_query(implode(" UNION ALL ", $qA));
+
+		$file = fopen("submissions/testing_attr_file.txt", "w+");
+
+		while($row = mysql_fetch_assoc($sql)){
+			//printing header
+			$headers = array_keys($row);		
+			fputcsv($file, $headers, chr(9));
+
+			//printing body
+			$i = 0;
+			fputcsv($file, $row, chr(9), chr(0));	
+			++$i;		
+		}
+		return "<a href=\"submissions/testing_attr_file.txt\" target=\"_blank\" >Click Here to Download</a>";
+	}
 ?>

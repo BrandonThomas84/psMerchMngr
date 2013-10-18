@@ -1,4 +1,4 @@
-<?php /* FILEVERSION: v1.0.1b */ ?>
+<?php /* FILEVERSION: v1.0.2b */ ?>
 <?php
 
 class fieldConfig{
@@ -57,7 +57,7 @@ class fieldConfig{
 					$value = 1;
 				} elseif($value == "off"){
 					$value = 0;
-				} elseif(is_numeric($value)){
+				} else{
 					$value = $value;
 				}
 			} 
@@ -111,7 +111,7 @@ class fieldConfig{
 		if(isset($_POST["function_command"])){
 			array_push($a,self::updateWriter("function_command",$_POST["function_command"]));
 		} 
-		array_push($a,self::updateWriter("enabled",@$_POST["enabled"]));
+		array_push($a,self::updateWriter("enabled",$_POST["enabled"]));
 
 		$fields = implode(",",$a);
 

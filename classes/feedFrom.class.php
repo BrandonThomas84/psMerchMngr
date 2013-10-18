@@ -1,4 +1,4 @@
-<?php /* FILEVERSION: v1.0.1b */ ?>
+<?php /* FILEVERSION: v1.0.2b */ ?>
 <?php 
 class feedFrom{
 
@@ -60,7 +60,7 @@ class feedFrom{
 		$a = array();
 		
 		$join = " LEFT JOIN ";
-       	$table = " ( SELECT DISTINCT id_product, id_image, CONCAT( CASE WHEN SUBSTRING(`id_image`,1,1) = '' THEN '' ELSE CONCAT('/',SUBSTRING(`id_image`,1,1))END, CASE WHEN SUBSTRING(`id_image`,2,1) = '' THEN '' ELSE CONCAT('/',SUBSTRING(`id_image`,2,1))END, CASE WHEN SUBSTRING(`id_image`,3,1) = '' THEN '' ELSE CONCAT('/',SUBSTRING(`id_image`,3,1))END, CASE WHEN SUBSTRING(`id_image`,4,1) = '' THEN '' ELSE CONCAT('/',SUBSTRING(`id_image`,4,1))END, CASE WHEN SUBSTRING(`id_image`,5,1) = '' THEN '' ELSE CONCAT('/',SUBSTRING(`id_image`,5,1))END, CASE WHEN SUBSTRING(`id_image`,6,1) = '' THEN '' ELSE CONCAT('/',SUBSTRING(`id_image`,6,1))END, '/',`id_image`,'.jpg' ) AS `img` FROM `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "image` WHERE position = " . $position . " ) AS `img" . $position . "` ";
+       	$table = " ( SELECT DISTINCT `i`.`id_product`, `i`.`id_image`, CONCAT('/',CASE WHEN SUBSTRING(`id_image`,1,1) = '' THEN '' ELSE SUBSTRING(`id_image`,1,1)END, CASE WHEN SUBSTRING(`id_image`,2,1) = '' THEN '' ELSE SUBSTRING(`id_image`,2,1)END, CASE WHEN SUBSTRING(`id_image`,3,1) = '' THEN '' ELSE SUBSTRING(`id_image`,3,1)END, CASE WHEN SUBSTRING(`id_image`,4,1) = '' THEN '' ELSE SUBSTRING(`id_image`,4,1)END, CASE WHEN SUBSTRING(`id_image`,5,1) = '' THEN '' ELSE SUBSTRING(`id_image`,5,1)END, CASE WHEN SUBSTRING(`id_image`,6,1) = '' THEN '' ELSE SUBSTRING(`id_image`,6,1)END, '-large_default/',`p`.`link_rewrite`,'.jpg') AS `img` FROM `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "image` AS i INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "product_lang` AS p  ON p.id_product = i.id_product WHERE `i`.`position` = " . $position . " ) AS `img" . $position . "` ";
        	$on = " ON `A`.`id_product` = `img" . $position . "`.`id_product` ";
     
        	array_push($a,$join . $table . $on);
@@ -91,7 +91,7 @@ class feedFrom{
 		return $join . $table . $on;
 	}
 	public static function tableAttrBuild($attributeGroup){
-		$select = " SELECT DISTINCT `b`.`id_product`, `d`.`name` AS `" . $attributeGroup . "`, `b`.`price` AS `attr_price`, `b`.`weight` AS `attr_weight`, CONCAT(`f`.`public_name`,': ',`d`.`name`)  AS `title_addition`";
+		$select = " SELECT DISTINCT `b`.`id_product`, `d`.`name` AS `" . $attributeGroup . "`, `b`.`price` AS `attr_price`, `b`.`weight` AS `attr_weight`, CONCAT(`f`.`public_name`,': ',`d`.`name`)  AS `title_addition`,CONCAT(`f`.`id_attribute_group`,`b`.`id_product_attribute`) AS `id_product_ext`";
 
 		$from = "
 			FROM `" . _DB_NAME_ . "`.`ps_product_attribute_combination` AS `a`
@@ -105,7 +105,7 @@ class feedFrom{
 				ON `c`.`id_attribute_group` = `e`.`id_attribute_group`
 				INNER JOIN `" . _DB_NAME_ . "`.`ps_attribute_group_lang` AS `f`
 				ON `e`.`id_attribute_group` = `f`.`id_attribute_group`
-			WHERE (`f`.`public_name` = '" . $attributeGroup . "') AND (`b`.`available_date` < CURRENT_TIMESTAMP OR `b`.`available_date` = 0000-00-00)";
+			WHERE (`f`.`public_name` = '" . $attributeGroup . "') AND (`b`.`available_date` < CURRENT_TIMESTAMP OR `b`.`available_date` = 0000-00-00) GROUP BY `a`.`id_attribute`";
 
 		return $select . $from;
 	}

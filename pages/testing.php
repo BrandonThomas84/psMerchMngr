@@ -1,5 +1,6 @@
 <?php /* FILEVERSION: v1.0.1b */ ?>
 <?php
+
 class testing{
 	
 	public function __construct(){
@@ -27,17 +28,18 @@ class testing{
 
 			</div>";
 		} else {
-			self::includeMerchantFunctions();
+			//including merchant classes
+			$classes = scandir("merchants/" . _MERCHANTID_ . "/classes");
+			for($i=2;$i<=(count($classes)-1);$i++){
+				require_once("merchants/" . _MERCHANTID_ . "/classes/" . $classes[$i]);
+			}
+
+			//method testing selectuon form
 			echo self::selectTestMethod();
 		}
 
 	}
-	public function includeMerchantFunctions(){
-		$classes = scandir("merchants/" . _MERCHANTID_ . "/classes");
-		for($i=2;$i<=(count($classes)-1);$i++){
-			require("merchants/" . _MERCHANTID_ . "/classes/" . $classes[$i]);
-		}
-	}
+	
 	public function selectTestMethod(){
 		if(isset($_POST["methodName"])){
 
@@ -52,10 +54,12 @@ class testing{
 				
 				//if a regular function has been subitted
 				echo $method[1](@$properties[0],@$properties[1],@$properties[2],@$properties[3],@$properties[4]);
+
 			} elseif($method[0] == "test"){
 				
 				//if a test method from this page has been submitted
 				echo self::$method[1](@$properties[0],@$properties[1],@$properties[2],@$properties[3],@$properties[4]);
+
 			} else {
 
 				//if it is a calculated class.method combination
@@ -195,8 +199,7 @@ class testing{
 				<input type=\"hidden\" name=\"transmitBug\" value=\"Transmission Key\">
 				<input type=\"hidden\" name=\"serverInfo\" value=\"" . $sInfo . "\">
 			</form>
-		</div>
-		";
+		</div>";
 	}
 	public function getMethodNamesForTesting(){
 		$noShow = array("__construct","selectTestMethod","..",".","img","__autoload","settings.inc.txt");
@@ -245,8 +248,15 @@ class testing{
 			}
 		}
 
+		//adding functions from this page
+		$testMethods = get_class_methods(__CLASS__);
+		foreach($testMethods AS $method){
+			array_push($methods,array("testing",$method));
+		}
+		
 		return $methods;
 	}
+
 }
 ////////////////////////////////////////////////////////////////////
 //BEGIN TESTING SCRIPTS
@@ -267,16 +277,6 @@ class testing{
 if($_SESSION["username"] !== "DemoUser" || $_SESSION['perm_level'] == "demo"){
 
 	$test = new testing;
-	$elements = array(
-			array("SiteDomain",$_POST["SiteDomain"]),
-			array("ApplicationLocation",$_POST["ApplicationLocation"]),
-			array("ApplicationName",$_POST["ApplicationName"]),
-			array("ApplicationLogins",1)
-		);
-		
-		foreach($elements AS $cookie){
-			echo "<b>" . $cookie[0] . "</b>: " . $cookie[1] . "</br>";
-		}
 
 } else {
 	echo "<div class=\"container\"><h1 class=\"page-title\">Restricted Page</h1><p class=\"alert-danger alert\">Although this is an actual page, you are not authorized to view its contents.</p></div>";

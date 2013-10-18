@@ -1,8 +1,6 @@
-<?php /* FILEVERSION: v1.0.1b */ ?>
+<?php /* FILEVERSION: v1.0.2b */ ?>
 <?php
 class page {
-
-	public $page;
 
 	public function __construct(){
 		if(isset($_GET["p"])){
@@ -54,6 +52,48 @@ class page {
 				require('pages/merchant_control.php');
 			}
 		}
+	}
+
+	public static function definePage(){
+		if(isset($_GET["p"])){
+			$page = $_GET["p"];
+		} elseif(_MERCH_ == "home"){
+			$page = "home";
+		} else {
+			if(isset($_GET["f"])){
+				$page = _MERCHANTID_;
+			}
+		}
+
+		//return the calc'd page name
+		return $page;
+	}
+
+	public static function pageHelpKey(){
+		
+		//setting the current page name
+		$page = self::definePage();
+
+		//adding the distinct fieldnames to the return array
+		if($page == "home"){
+			$a = array();
+		} elseif($page == "exmng"){
+			$a = array("selectMerchant",);
+		} elseif($page == "tax"){
+			$a = array();
+		} elseif($page == "cpnl"){
+			$a = array();
+		} elseif($page == "tst"){
+			$a = array();
+		} elseif($page == "dtbs"){
+			$a = array();
+		} elseif($page == "ovrde"){
+			$a = array();
+		} else {
+			$a = array();
+		}
+
+		return $a;
 	}
 }
 

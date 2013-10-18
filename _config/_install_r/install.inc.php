@@ -8,7 +8,7 @@ function __autoload($classname) {
 class install {
 	public $version;
 	public $installComplete;
-	public $tables = array("mc_cattax_mapping","mc_exclusion","mc_login_attempts","mc_members","mc_select_config","mc_taxonomy","mc_overrides");
+	public $tables = array("mc_cattax_mapping","mc_exclusion","mc_login_attempts","mc_members","mc_select_config","mc_taxonomy","mc_overrides","mc_help");
 
 	public function __construct(){
 		if(isset($_POST["message"])){messageReporting::insertMessage("warning",$_POST["message"]);}

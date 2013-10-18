@@ -19,7 +19,7 @@ class mc_select_config extends tableInstall {
 		  `order` int(11) DEFAULT NULL,
 		  PRIMARY KEY (`merchant_id`,`report_field_name`),
 		  UNIQUE KEY `id_UNIQUE` (`id`)
-		)ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;";
+		)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;";
 	}
 
 	public static function populate(){
