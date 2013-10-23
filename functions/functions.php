@@ -238,6 +238,10 @@ if(isset($_GET["p"])){
 function reportQueryWhere(){
 	return " WHERE (`A`.`active` = 1) AND (`A`.`available_for_order` = 1) AND (`A`.`id_product` NOT IN (SELECT DISTINCT `id_product` FROM `" . _DB_NAME_ . "`.`mc_exclusion` WHERE `exclusion` = '" . _MERCHANTID_ . "'))";
 }
+//create feed grouping statement
+function reportQueryGroup(){
+	return " GROUP BY " . id::selectNoAlias();
+}
 function getAttrGroups(){
 	$sql = "SELECT DISTINCT `public_name` AS `group` FROM  `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute_group_lang`";
 	return $sql;
@@ -249,10 +253,22 @@ function getAttrGroups(){
 
 //constructs the query from the three segements above
 function queryBuilder($v){
-    $query =  feedSelect::selectConstruct() . feedFrom::fromConstruct("") . reportQueryWhere();
+	//creating array for full sql statement
+	$a = array();
 	
+	//ading individual statement segments
+	array_push($a,feedSelect::selectConstruct());
+	array_push($a,feedFrom::fromConstruct(""));
+	array_push($a,reportQueryWhere());
+	array_push($a,feedGroup::groupConstruct());
+
+	//imploding query array
+    $query =  implode("",$a); 
+	
+	//setting a limit for printing the header
 	$headerlimit = " LIMIT 0,1 ";
 
+	//checking if printing head or body
 	if($v == 'head'){
 		$sql = mysql_query($query . $headerlimit);
 		if(!$sql){die('Invalid query: ' . mysql_error());}
@@ -263,20 +279,19 @@ function queryBuilder($v){
 		return $sql;
 	}
 };
-//rpints the query being used for testing purposes
+//prints the query being used for testing purposes
 function printQueryBuilder($v){
-    $query =  feedSelect::selectConstruct() . feedFrom::fromConstruct("") . reportQueryWhere();
-    $headerlimit = " LIMIT 0,1 ";
+    
+    $a = array();
+	
+	array_push($a,feedSelect::selectConstruct());
+	array_push($a,feedFrom::fromConstruct(""));
+	array_push($a,reportQueryWhere());
+	array_push($a,feedGroup::groupConstruct());
+	
+    $query =  implode("",$a); 
 
-    if($v == 'head'){
-		$sql = $query . $headerlimit;
-		if(!mysql_query($sql)){die('Invalid query: ' . mysql_error());} else {$sql = "Proper Query: <br>" . $sql; }
-		return $sql;
-	} else {
-		$sql = $query;
-		if(!mysql_query($sql)){die('Invalid query: ' . mysql_error());} else {$sql = "Proper Query: <br>" . $sql; }
-		return $sql;
-	}
+	return $query;
 }
 //function used to construct the header of the output file
 function HeaderPrint($file,$sql){
@@ -362,16 +377,17 @@ function checkAttributes(){
 
 		$file = fopen("submissions/testing_attr_file.txt", "w+");
 
-		while($row = mysql_fetch_assoc($sql)){
-			//printing header
-			$headers = array_keys($row);		
-			fputcsv($file, $headers, chr(9));
+		$row = mysql_fetch_assoc($sql);
 
-			//printing body
-			$i = 0;
-			fputcsv($file, $row, chr(9), chr(0));	
-			++$i;		
-		}
+		//printing header
+		$headers = array_keys($row);		
+		fputcsv($file, $headers, chr(9));
+
+		//printing body
+		$i = 0;
+		fputcsv($file, $row, chr(9), chr(0));	
+		++$i;		
+
 		return "<a href=\"submissions/testing_attr_file.txt\" target=\"_blank\" >Click Here to Download</a>";
 	}
 ?>

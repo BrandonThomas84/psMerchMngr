@@ -27,7 +27,7 @@ class feedFrom{
 	public static function tableC(){
 		$join = " LEFT JOIN ";
 		$table = " `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "product_lang` AS `C` ";
-		$on = " ON `A`.`id_product` = `C`.`id_product` ";
+		$on = " ON `A`.`id_product` = `C`.`id_product` AND `C`.`id_lang` = 1 ";
 
 		return $join . $table . $on;
 	}
@@ -91,7 +91,7 @@ class feedFrom{
 		return $join . $table . $on;
 	}
 	public static function tableAttrBuild($attributeGroup){
-		$select = " SELECT DISTINCT `b`.`id_product`, `d`.`name` AS `" . $attributeGroup . "`, `b`.`price` AS `attr_price`, `b`.`weight` AS `attr_weight`, CONCAT(`f`.`public_name`,': ',`d`.`name`)  AS `title_addition`,CONCAT(`f`.`id_attribute_group`,`b`.`id_product_attribute`) AS `id_product_ext`";
+		$select = " SELECT DISTINCT `b`.`id_product`, `d`.`name` AS `" . $attributeGroup . "`, `b`.`price` AS `attr_price`, `b`.`weight` AS `attr_weight`,CONCAT(`f`.`public_name`,': ',`d`.`name`) AS `title_addition`,CONCAT(`c`.`id_attribute_group`,`c`.`id_attribute`) AS `id_product_ext`,`b`.`reference` AS `new_mpn`";
 
 		$from = "
 			FROM `" . _DB_NAME_ . "`.`ps_product_attribute_combination` AS `a`
@@ -105,7 +105,8 @@ class feedFrom{
 				ON `c`.`id_attribute_group` = `e`.`id_attribute_group`
 				INNER JOIN `" . _DB_NAME_ . "`.`ps_attribute_group_lang` AS `f`
 				ON `e`.`id_attribute_group` = `f`.`id_attribute_group`
-			WHERE (`f`.`public_name` = '" . $attributeGroup . "') AND (`b`.`available_date` < CURRENT_TIMESTAMP OR `b`.`available_date` = 0000-00-00) GROUP BY `a`.`id_attribute`";
+			WHERE (`f`.`public_name` = '" . $attributeGroup . "') AND (`b`.`available_date` < CURRENT_TIMESTAMP OR `b`.`available_date` = 0000-00-00) 
+			GROUP BY CONCAT(`c`.`id_attribute_group`,`c`.`id_attribute`) ";
 
 		return $select . $from;
 	}

@@ -18,9 +18,13 @@ if(isset($_GET["fieldID"])){
 
 	$file = "submissions/" . _MERCHANTID_ . "_feed.txt"; 
 	$taxonomy = new taxonomyButton;
+	if(file_exists($file)){
+		$fileCreation = date('l m/d/Y H:i:s', filemtime($file));
+		$fileSize = round(((filesize($file)/1024)/1024),2,PHP_ROUND_HALF_UP); 	
+	} else {
+		echo messageReporting::insertMessage("warning","You have not created a feed for this merchant yet. Why don't you start by creating a new feed?");
+	}
 	
-	$fileCreation = date('l m/d/Y H:i:s', filemtime($file));
-	$fileSize = round(((filesize($file)/1024)/1024),2,PHP_ROUND_HALF_UP); 
 	
 	echo "
 	<div class=\"container well\">
