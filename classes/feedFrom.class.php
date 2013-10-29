@@ -25,9 +25,9 @@ class feedFrom{
 	}
 
 	public static function tableC(){
-		$join = " LEFT JOIN ";
+		$join = " INNER JOIN ";
 		$table = " `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "product_lang` AS `C` ";
-		$on = " ON `A`.`id_product` = `C`.`id_product` AND `C`.`id_lang` = 1 ";
+		$on = " ON `A`.`id_product` = `C`.`id_product`";
 
 		return $join . $table . $on;
 	}
@@ -90,37 +90,90 @@ class feedFrom{
 
 		return $join . $table . $on;
 	}
-	public static function tableAttrBuild($attributeGroup){
-		$select = " SELECT DISTINCT `b`.`id_product`, `d`.`name` AS `" . $attributeGroup . "`, `b`.`price` AS `attr_price`, `b`.`weight` AS `attr_weight`,CONCAT(`f`.`public_name`,': ',`d`.`name`) AS `title_addition`,CONCAT(`c`.`id_attribute_group`,`c`.`id_attribute`) AS `id_product_ext`,`b`.`reference` AS `new_mpn`";
+	public static function tableAttrBuild(){
+		//table array
+		$t = array();
 
-		$from = "
-			FROM `" . _DB_NAME_ . "`.`ps_product_attribute_combination` AS `a`
-				INNER JOIN `" . _DB_NAME_ . "`.`ps_product_attribute` AS `b`
-				ON `a`.`id_product_attribute` = `b`.`id_product_attribute` 
-				INNER JOIN `" . _DB_NAME_ . "`.`ps_attribute` AS `c`
-				ON `a`.`id_attribute` = `c`.`id_attribute` 
-				INNER JOIN `" . _DB_NAME_ . "`.`ps_attribute_lang` AS `d`
-				ON `c`.`id_attribute` = `d`.`id_attribute`
-				INNER JOIN `" . _DB_NAME_ . "`.`ps_attribute_group` AS `e`
-				ON `c`.`id_attribute_group` = `e`.`id_attribute_group`
-				INNER JOIN `" . _DB_NAME_ . "`.`ps_attribute_group_lang` AS `f`
-				ON `e`.`id_attribute_group` = `f`.`id_attribute_group`
-			WHERE (`f`.`public_name` = '" . $attributeGroup . "') AND (`b`.`available_date` < CURRENT_TIMESTAMP OR `b`.`available_date` = 0000-00-00) 
-			GROUP BY CONCAT(`c`.`id_attribute_group`,`c`.`id_attribute`) ";
+		//table select array, field list array that is used in the result query
+		$ts = array();
 
-		return $select . $from;
+		//select array
+		$s = array();
+
+		//retrieving attribute groups
+		$query = mysql_query(getAttrGroups());
+		
+		//starting counter
+		$i=0;
+
+		//adding each attribute group table to query
+		while($row = mysql_fetch_array($query)){
+
+			//checking to see if this is the first attribute table, if so there is no on statement necessary
+			if($i > 0){
+				$join = " LEFT JOIN ";
+				$on = "ON `attr" . ($i+1) . "`.`id_product` = `attr1`.`id_product` AND `attr1`.`reference` = `attr" . ($i+1) . "`.`reference`";
+			} else {
+				$join = "";
+				$on = "";
+			}
+
+			//setting table select array value
+			$tsValue = "`attr" . ($i+1) . "`.`" . $row["group"] . "`";
+
+			//pushing sub select field to table select array
+			array_push($ts,$tsValue);
+
+			//setting the table array value
+			$v = $join . "(SELECT DISTINCT `l`.`name` AS `" . $row["group"] . "`, `l`.`id_attribute`, CONCAT(`g`.`public_name`,': ',`l`.`name`) AS `title_addition`, `a`.`id_product`,`a`.`reference`
+				FROM `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute_group_lang` AS `g`
+					INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute` AS `v` ON `v`.`id_attribute_group` = `g`.`id_attribute_group`
+					INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute_lang` AS `l` ON `v`.`id_attribute` = `l`.`id_attribute`
+					INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "product_attribute_combination` AS `b` ON `b`.`id_attribute` = `l`.`id_attribute`
+					INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "product_attribute` AS `a` ON `b`.`id_product_attribute` = `a`.`id_product_attribute`
+					WHERE `v`.`id_attribute_group` = " . $row["id"] . ") AS `attr" . ($i+1) . "`" . $on;
+
+			//pushing the table information to the table array
+			array_push($t,$v);
+
+			//pushing the select information to the select array
+			array_push($s," `attrGroup`.`" . $row["group"] . "`");
+
+			$i++;
+		}
+		
+		//completeing the sub select array
+		array_push($ts,"`attr1`.`id_product`,`attr1`.`reference` FROM ");
+
+		$sql = "
+		SELECT DISTINCT `a`.`id_product`," . implode(',',$s) . ",
+		                `a`.`price` AS `attr_price`,
+		                `a`.`weight` AS `attr_weight`,
+		                `a`.`id_product_attribute` AS `id_product_ext`,
+		                `a`.`reference` AS `new_mpn`
+		FROM `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "product_attribute` AS `a`
+		INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "product_attribute_combination` AS `b` ON `b`.`id_product_attribute` = `a`.`id_product_attribute`
+		INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute`  AS `c` ON `c`.`id_attribute` = `b`.`id_attribute`
+		INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute_lang`  AS `d` ON `d`.`id_attribute` = `b`.`id_attribute`
+		INNER JOIN `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute_group_lang` AS `e` ON `e`.`id_attribute_group` = `c`.`id_attribute_group`
+
+		LEFT JOIN (SELECT DISTINCT " . implode(',',$ts) . implode('',$t) . ") AS `attrGroup`
+			ON `attrGroup`.`id_product` = `a`.`id_product`AND `a`.`reference` = `attrGroup`.`reference`
+		WHERE  (`a`.`available_date` < CURRENT_TIMESTAMP
+		       OR `a`.`available_date` = 0000-00-00)";
+
+		//returning sql
+		return $sql;
 	}
 	public static function tableAttrBase(){
        	$a = array();
-       	$query = mysql_query(getAttrGroups());
        	
-        while($group = mysql_fetch_array($query)){
-        	$table = "(" . self::tableAttrBuild($group["group"]) . ") AS `" . $group["group"] . "` ";
-			$join = " LEFT JOIN ";
-			$on = " ON `" . $group["group"] . "`.`id_product` = `A`.`id_product` ";
+        $table = "(" . self::tableAttrBuild() . ") AS `attrSet`";
+		$join = " LEFT JOIN ";
+		$on = " ON `attrSet`.`id_product` = `A`.`id_product` ";
 
-			array_push($a,$join . $table . $on);
-        }
+		array_push($a,$join . $table . $on);
+        
         return implode(" ",$a);
     }
     public static function tableOverrideBase(){
@@ -158,5 +211,8 @@ class feedFrom{
 		
 		return " FROM " . implode(" ",array_unique($a,SORT_REGULAR));
 	}
+
+//NEW ATTR BUILD
+	
 }
 ?>

@@ -243,7 +243,7 @@ function reportQueryGroup(){
 	return " GROUP BY " . id::selectNoAlias();
 }
 function getAttrGroups(){
-	$sql = "SELECT DISTINCT `public_name` AS `group` FROM  `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute_group_lang`";
+	$sql = "SELECT DISTINCT `id_attribute_group` AS `id`, `public_name` AS `group` FROM  `" . _DB_NAME_ . "`.`" . _DB_PREFIX_ . "attribute_group_lang`";
 	return $sql;
 }
 

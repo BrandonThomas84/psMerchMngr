@@ -8,7 +8,7 @@ class title extends feedFunction {
 		return "`C`.`name`"; 
 	}
 	public static function includeTables(){
-		$a = array("C","");
+		$a = array("A","");
 		return $a;
 	}
 	public static function defaultValues(){

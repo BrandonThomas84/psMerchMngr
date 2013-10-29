@@ -5,7 +5,7 @@
 class mapToAttribute extends feedFunction {
 
     public static function selectNoAlias($fieldName){
-        return "`" . $fieldName . "` . `" . $fieldName . "`";
+        return "`attrSet` . `" . $fieldName . "`";
     }
     public static function includeTables(){
 		$a = array("A","");

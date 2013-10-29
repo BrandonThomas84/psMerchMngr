@@ -5,7 +5,9 @@ class mpn extends feedFunction {
 	public static $alias = __CLASS__;
 	
 	public static function selectNoAlias(){
-		return "`A`.`reference`"; 
+
+		//setting return value
+		return "COALESCE(`attrSet`.`new_mpn`,`A`.`reference`)"; 
 	}
 	public static function includeTables(){
 		$a = array("A","");

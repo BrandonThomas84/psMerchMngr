@@ -29,6 +29,7 @@ class feedSelect{
 		array_push($tables,array("Cur",""));
 		array_push($tables,array("A",""));
 		array_push($tables,array("B",""));
+		array_push($tables,array("C",""));
 		array_push($tables,array("AttrBase",""));
 		array_push($tables,array("OverrideBase",""));
 		

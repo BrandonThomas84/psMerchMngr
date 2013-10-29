@@ -19,7 +19,7 @@ class feedGroup {
 		return "CAST(CONCAT(`A`.`id_product`, " . $idext . ") AS CHAR(50))";
 	}
 	public static function groupConstruct(){
-		return " GROUP BY `id`";
+		return " GROUP BY `mpn`";
 	} 
 }
 ?>
