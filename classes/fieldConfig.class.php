@@ -51,13 +51,24 @@ class fieldConfig{
 		if($value == "" || $value == "NULL"){
 			$value = "NULL";
 			} else {
+
+				//defining array of string variables
 				if(in_array($field,array("table_name","database_field_name","static_value","custom_function","function_command"))){
 					$value = "'" . $value . "'";
-				} elseif($value == "on"){
+
+				} elseif(in_array($value,array("on",1,"true",true))){
+
+					//converting non friendly false values to db friendly ones
 					$value = 1;
-				} elseif($value == "off"){
+
+				} elseif((in_array($value,array("off",0,"false",false)))){
+
+					//checking if it is a fals or null value or not set if enabled 
 					$value = 0;
+
 				} else{
+
+					//simply return the form data
 					$value = $value;
 				}
 			} 
@@ -114,7 +125,16 @@ class fieldConfig{
 		//for each field check to see if it has been submitted and if so push the update statement to the update array
 		foreach($fields as $field){
 			if(isset($_POST[$field])){
-				array_push($a,self::updateWriter($field,$_POST[$field]));
+				@array_push($a,self::updateWriter($field,$_POST[$field]));
+			}
+
+			if($field == "enabled"){
+				if(isset($_POST["enabled"])){
+					array_push($a," `enabled` = 1 ");
+				} else {
+					array_push($a," `enabled` = 0 ");
+				}
+				
 			}
 		}
 

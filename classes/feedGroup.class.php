@@ -29,7 +29,7 @@ class feedGroup {
 			$row = mysql_fetch_array($query);
 
 			//if mpn enabled then group by mpn
-			if($row["enabled"] == true){
+			if($row["enabled"] == 1){
 				return " GROUP BY `mpn`";		
 			}
 		}

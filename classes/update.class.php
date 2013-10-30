@@ -16,7 +16,7 @@ class update {
 		$files = array();
 
 		//files to ignore
-		$ignore = array(".","..",".htaccess","_backup","Thumbs.db","_update");
+		$ignore = array(".","..",".htaccess","_backup","Thumbs.db","_update","LICENSE",".git");
 		
 		
 

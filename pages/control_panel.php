@@ -1,5 +1,5 @@
 <?php /* FILEVERSION: v1.0.1b */ ?>
-<?php $cpanel = new controlPanel; ?>
+<?php $cpanel = new controlPanel(); ?>
 
 <div class="page-header">
 	<h1>Application Configuration</h1>
@@ -79,7 +79,7 @@
 		    	</div>
 		    	<div id="collapseCore" class="panel-collapse collapse">
 		    		<form action="<?php echo $_SERVER["PHP_SELF"]; ?>?p=cpnl" method="post" class="form">
-						<?php echo $cpanel->settings->controlPanelDisplay(); ?>
+						<?php echo $cpanel->controlPanelDisplay(); ?>
 					</form>
 				</div>
 			</div>

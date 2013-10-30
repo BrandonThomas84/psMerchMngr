@@ -1,6 +1,6 @@
 <?php /* FILEVERSION: v1.0.1b */ ?>
 <?php
-class controlPanel{
+class controlPanel extends settings {
 	public static $mysqli;
 	public static $user_id;
 	public static $username;
@@ -14,9 +14,6 @@ class controlPanel{
 		self::$mysqli = new mysqli(_DB_SERVER_,_DB_USER_,_DB_PASSWD_,_DB_NAME_);
 		if (!self::$mysqli){die("Could not connect to MySQLi: " . mysql_error());}
 		self::controlPanelPageLoad();
-
-		require_once("_config/_settings/settings.inc.php");
-		$this->settings = new settings;
 
 		//instantiating new update class
 		$this->update = new update;

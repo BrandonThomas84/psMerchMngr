@@ -3,14 +3,16 @@
 ////////////////////////////////////////////////////////////////////////
 // Core Required files
 ////////////////////////////////////////////////////////////////////////
-require("functions/db_connect.php");
-require("_config/_settings/settings.inc.php");
+require_once("functions/db_connect.php");
+require_once("_config/_settings/settings.inc.php");
+
 ////////////////////////////////////////////////////////////////////////
 // Settings
 ////////////////////////////////////////////////////////////////////////
-//setting the settings cookie values
+//instantiating the settings (also sets cookie values)
 $settings = new settings;
 $settings->getSettings();
+
 ////////////////////////////////////////////////////////////////////////
 //Include all classes
 ////////////////////////////////////////////////////////////////////////
@@ -18,6 +20,7 @@ $classes = scandir("./classes");
 for($i=2;$i<=(count($classes)-1);$i++){
 	require("./classes/" . $classes[$i]);
 }
+
 ////////////////////////////////////////////////////////////////////////
 // General Functions
 ////////////////////////////////////////////////////////////////////////
@@ -256,7 +259,7 @@ function queryBuilder($v){
 	//creating array for full sql statement
 	$a = array();
 	
-	//ading individual statement segments
+	//adding individual statement segments
 	array_push($a,feedSelect::selectConstruct());
 	array_push($a,feedFrom::fromConstruct(""));
 	array_push($a,reportQueryWhere());
@@ -268,12 +271,17 @@ function queryBuilder($v){
 	//setting a limit for printing the header
 	$headerlimit = " LIMIT 0,1 ";
 
+	//making sure the server will accept big selects
+	mysql_query('SET SQL_BIG_SELECTS=1;');
+
 	//checking if printing head or body
 	if($v == 'head'){
+
 		$sql = mysql_query($query . $headerlimit);
 		if(!$sql){die('Invalid query: ' . mysql_error());}
 		return $sql;
 	} else {
+
 		$sql = mysql_query($query);
 		if(!$sql){die('Invalid query: ' . mysql_error());}
 		return $sql;

@@ -3,10 +3,7 @@
 
 class settings {
 
-	public function settings(){
-		self::getSettings();
-	}
-	public function checkSubmission(){
+	public static function checkSubmission(){
 
 		//setting default trigger for checking if submission has been set
 		$set = false;
@@ -32,13 +29,13 @@ class settings {
 		}
 
 	}
-	public function getCookieNames(){
+	public static function getCookieNames(){
 
 		$settings = explode(chr(59),$_COOKIE["sN"]);
 
 		return $settings;
 	}
-	public function getCookieValues(){
+	public static function getCookieValues(){
 
 		$settings = self::getCookieNames();
 
@@ -63,7 +60,7 @@ class settings {
 
 		return $settingsArray;
 	}
-	public function addNewCookieMap($name){
+	public static function addNewCookieMap($name){
 		
 		$presVal = explode(chr(59),$_COOKIE["sN"]);
 		
@@ -75,7 +72,7 @@ class settings {
 			setcookie("sN",$newSN);
 		}
 	}
-	public function getSettings(){
+	public static function getSettings(){
 		//settings file
 		$file = "_config/_settings/settings.inc.txt";
 
@@ -131,7 +128,7 @@ class settings {
 			setcookie("sN",$settingNames);
 		}
 	}
-	public function releaseSettings(){
+	public static function releaseSettings(){
 
 		//gathering names of all the cookies
 		$settings = self::getCookieNames();
@@ -144,7 +141,7 @@ class settings {
 		//releasing cookie name cookie
 		setcookie("sN",0,time()-1000);
 	}
-	public function saveSettings(){
+	public static function saveSettings(){
 
 		$settingsArray = self::getCookieValues();
 
@@ -166,7 +163,7 @@ class settings {
 			fclose($file);
 		}
 	}
-	public function updateCookies($name,$value){
+	public static function updateCookies($name,$value){
 
 			//checking if cookie is last modified
 			if($name == "SettingsLastModified"){
@@ -178,14 +175,14 @@ class settings {
 			//setting cookie value
 			setcookie($name,$value,0);
 	}
-	public function showSettings(){
+	public static function showSettings(){
 		$settings = explode(chr(59),$_COOKIE["sN"]);
 
 		foreach ($settings as $setting) {
 			echo "<p><strong>" . $setting . ":</strong> " . $_COOKIE[$setting] . "</p>";
 		}
 	}
-	public function formatDateSettings($name,$value){
+	public static function formatDateSettings($name,$value){
 		
 		//presetting return value
 		$value = $value;
@@ -204,7 +201,7 @@ class settings {
 		
 		return $value;
 	}
-	public function controlPanelDisplay(){
+	public static function controlPanelDisplay(){
 		//fields that should be disabled
 		$disabledFields = array("SettingsLastModified","ApplicationCreationDate","LastApplicationUpdate","LastUserLogin","ApplicationVersion");
 
