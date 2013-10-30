@@ -19,7 +19,20 @@ class feedGroup {
 		return "CAST(CONCAT(`A`.`id_product`, " . $idext . ") AS CHAR(50))";
 	}
 	public static function groupConstruct(){
-		return " GROUP BY `mpn`";
+
+		//checking if merchant is google
+		if(_MERCHANTID_ == 'google'){
+
+			//checking if mpn is enabled
+			$sql = "SELECT `enabled` FROM `" . _DB_NAME_ . "`.`mc_select_config` WHERE `report_field_name` = 'mpn'";
+			$query = mysql_query($sql);
+			$row = mysql_fetch_array($query);
+
+			//if mpn enabled then group by mpn
+			if($row["enabled"] == true){
+				return " GROUP BY `mpn`";		
+			}
+		}
 	} 
 }
 ?>

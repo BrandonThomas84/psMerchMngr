@@ -104,19 +104,27 @@ class fieldConfig{
 		mysql_query($sql);
 	}
 	public function updateField(){
+
+		//what fields to look for in the submitted form
+		$fields = array("static_value","custom_function","function_command","enabled");
+
+		//array used to print fields in update
 		$a = array();
 
-		array_push($a,self::updateWriter("static_value",$_POST["static_value"]));
-		array_push($a,self::updateWriter("custom_function",$_POST["custom_function"]));
-		if(isset($_POST["function_command"])){
-			array_push($a,self::updateWriter("function_command",$_POST["function_command"]));
-		} 
-		array_push($a,self::updateWriter("enabled",$_POST["enabled"]));
+		//for each field check to see if it has been submitted and if so push the update statement to the update array
+		foreach($fields as $field){
+			if(isset($_POST[$field])){
+				array_push($a,self::updateWriter($field,$_POST[$field]));
+			}
+		}
 
-		$fields = implode(",",$a);
+		//compile each update into one
+		$updateFields = implode(",",$a);
 
-		$sql = "UPDATE `" . _DB_NAME_ . "`.`mc_select_config` SET " . $fields . " WHERE `id` = " . $_POST["id"];
-		
+		//update query
+		$sql = "UPDATE `" . _DB_NAME_ . "`.`mc_select_config` SET " . $updateFields . " WHERE `id` = " . $_POST["id"];		
+
+		//run update
 		$query = mysql_query($sql);
 	}
 }	

@@ -5,18 +5,9 @@ class price extends feedFunction {
 	public static $alias = __CLASS__;
 	
 	public static function selectNoAlias(){
-		//calling attributes set that will have an effect on the price
-		$query = mysql_query(getAttrGroups());
-		$a = array();
-
-		//creating a summation for each price attribute
-		while($row = mysql_fetch_array($query)){
-			$v = "(CASE WHEN `" . $row["group"] . "`.`attr_price` IS NULL THEN 0 ELSE `" . $row["group"] . "`.`attr_price` END)";
-			array_push($a,$v);
-		}
 		
-		//summing all prices via sql
-		$priceIncrease = implode("+",$a);
+		//Case for if there is an additional cost based on the attribute set
+		$priceIncrease = "(CASE WHEN `attrSet`.`attr_price` IS NULL OR `attrSet`.`attr_price` = 0 THEN 0 ELSE `attrSet`.`attr_price` END)";
 		
 		//returning new row information for price that includes attribute adjusted pricing
 		return "CONCAT(CAST(CAST(`A`.`price`+(" . $priceIncrease . ") AS DECIMAL(10,2)) AS CHAR(15)),' ',`cur`.`iso_code`)";
