@@ -1,5 +1,8 @@
 <?php /* FILEVERSION: v1.0.1b */ ?>
-<?php $cpanel = new controlPanel(); ?>
+<?php 
+$cpanel = new controlPanel(); 
+$cpanel->buildObjectVariables();
+?>
 
 <div class="page-header">
 	<h1>Application Configuration</h1>
@@ -20,7 +23,7 @@
 		    				<div class="help-block"><span>Change Username</span></div>
 		    			</div>
 			    		<div class="col-md-6">
-				        	<input type="text" class="form-control" name="existingUserName" value="<?php echo $cpanel::$username;?>" required=required>
+				        	<input type="text" class="form-control" name="existingUserName" value="<?php echo $cpanel->username;?>" required=required>
 				        </div>
 				    </div>
 				    <div class="clearfix"></div>
@@ -41,7 +44,7 @@
 			    		</div>
 			    		<div class="col-md-6">
 				        	<input type="password" class="form-control" name="existingUserPass" required=required>
-				        	<input type="hidden" name="existingUserPermLevel" value="<?php echo $cpanel::$perm_level;?>">
+				        	<input type="hidden" name="existingUserPermLevel" value="<?php echo $cpanel->perm_level;?>">
 				        	<input type="hidden" name="curUser" value="curUser">
 				        </div>
 				    </div>
@@ -69,7 +72,7 @@
 	<div class="clearfix"></div>
 <?php 
 	$acceptedUsers = array ("admin","poweruser");
-	if(in_array($cpanel::$perm_level,$acceptedUsers)){
+	if(in_array($cpanel->perm_level,$acceptedUsers)){
 ?>
 	<div class="col-md-12 panel-body">
 		<div class="panel-group" id="accordion">

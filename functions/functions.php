@@ -271,8 +271,19 @@ function queryBuilder($v){
 	//setting a limit for printing the header
 	$headerlimit = " LIMIT 0,1 ";
 
-	//making sure the server will accept big selects
-	mysql_query('SET SQL_BIG_SELECTS=1;');
+	if(isset($_COOKIE["Debug"]) && $_COOKIE["Debug"] == "on"){
+		try {
+
+			//making sure the server will accept big selects
+			mysql_query('SET GLOBAL SQL_BIG_SELECTS=1, GLOBAL MAX_ALLOWED_PACKET=104857600');
+
+		} catch (Exception $e) {  
+			
+			//display exception
+			throw new Exception( 'MySQL Error:', 0, $e);
+		} 
+	}
+	
 
 	//checking if printing head or body
 	if($v == 'head'){
@@ -291,7 +302,13 @@ function queryBuilder($v){
 function printQueryBuilder($v){
     
     $a = array();
-	
+
+    //if debug is active then add database big selects and max packet size fix
+	if(isset($_COOKIE["Debug"]) && $_COOKIE["Debug"] == "on"){
+		array_push($a,' SET GLOBAL SQL_BIG_SELECTS=1, GLOBAL MAX_ALLOWED_PACKET=104857600; ');
+	}
+
+	//add query to the array
 	array_push($a,feedSelect::selectConstruct());
 	array_push($a,feedFrom::fromConstruct(""));
 	array_push($a,reportQueryWhere());

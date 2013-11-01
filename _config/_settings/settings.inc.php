@@ -3,41 +3,81 @@
 
 class settings {
 
-	public static function checkSubmission(){
+	public $tfSettings;
+	public $currentDateSettings;
+	public $dateTimeSettings;
 
-		//setting default trigger for checking if submission has been set
-		$set = false;
+	public function buildObjectVariables(){
+		$this->tfSettings = array("Debug");
+		$this->currentDateSettings = array("SettingsLastModified");
+		$this->dateTimeSettings = array("ApplicationCreationDate","LastApplicationUpdate","PreviousLogin");
+	}
+
+	public function coreSubmissionUpdate(){
+
+		//concstructing object variables
+		$this->buildObjectVariables();
 
 		//check or submissions mathcing any set sN cookies
-		foreach(self::getCookieNames() AS $cookie){
+		foreach($this->getCookieNames() AS $cookie){
 
-			if(isset($_POST[$cookie])){
+			//update the cookie with the new posted value
+			$value = $this->formatValue($cookie,"get");
 
-				//update the cookie with the new posted value
-				self::updateCookies($cookie,$_POST[$cookie]);
-
-				//set the default trigger to true so the update runs on the csv file
-				$set = true;
-			}
+			//update settings cookies
+			$this->updateCookies($cookie,$value);
 		}
 
-		//checking if default trigger is set
-		if($set == true){
-
-			//if default trigger is set then apply changes to csv file
-			self::saveSettings();
-		}
+		//if default trigger is set then apply changes to csv file
+		$this->saveSettings();
 
 	}
-	public static function getCookieNames(){
+	public function getCookieNames(){
 
+		//getting the cookie names from the sN cookie value
 		$settings = explode(chr(59),$_COOKIE["sN"]);
 
 		return $settings;
 	}
-	public static function getCookieValues(){
+	public function formatValue($name,$val){
+		//checking to see if value was specificed
+		if($val == "get"){
+			if(isset($_POST[$name])){
 
-		$settings = self::getCookieNames();
+				$value = $_POST[$name];
+
+				//if setting value needs date processing
+				if(in_array($name,$this->dateTimeSettings)){
+
+					//setting value to cookie value
+					$time = strtotime($value);
+					
+					//acceptable format for writing
+					$value = date("d-M-y H:i:s T",$time);
+
+				} elseif(in_array($name,$this->currentDateSettings)){
+
+					//setting value to current time
+					$value = date("d-M-y H:i:s T",time());
+
+				}
+			} else {
+				$value = "off";
+			}
+		} else {	
+			$value = $val;
+		}
+		
+		//return the formatted value
+		return $value;
+	}
+	public function updateCookies($name,$value){
+		//setting cookie value
+		setcookie($name,$value,0);
+	}
+	public function getCookieValues(){
+
+		$settings = $this->getCookieNames();
 
 		$settingsArray = array();
 
@@ -52,7 +92,7 @@ class settings {
 			$value = $_COOKIE[$settings[$i]];
 
 			//run value through date formatting
-			$value = self::formatDateSettings($name,$value);
+			$value = $this->formatValue($name,$value);
 
 			//pushing value to array
 			array_push($settingsArray,$value);			
@@ -60,7 +100,7 @@ class settings {
 
 		return $settingsArray;
 	}
-	public static function addNewCookieMap($name){
+	public function addNewCookieMap($name){
 		
 		$presVal = explode(chr(59),$_COOKIE["sN"]);
 		
@@ -72,7 +112,8 @@ class settings {
 			setcookie("sN",$newSN);
 		}
 	}
-	public static function getSettings(){
+	public function getSettings(){
+
 		//settings file
 		$file = "_config/_settings/settings.inc.txt";
 
@@ -100,24 +141,23 @@ class settings {
 
 	  		while($i < $items) {
 
+	  			//checking if even array element
 				if (($i == 0) || ($i % 2 == 0)) {
 
-					$colName = $settings[$i];
+					//setting the cookie name
+					$name = $settings[$i];
 					
+					//advancing to next array item (value)
 					$i++;
-					
-					$value = $settings[$i];
 
-					//if cookie is version then do not run time processing 
-					if($colName !== "ApplicationVersion"){
-						$value = self::formatDateSettings($colName,$value);
-					}
+					//format value
+					$value = $this->formatValue($name,$settings[$i]);
 
 					//setting cookie value
-					setcookie($colName,$value);
+					$this->updateCookies($name,$value);
 
 					//pushing setting name to array
-					array_push($settingNames,$colName);
+					array_push($settingNames,$name);
 
 					$i++;
 				} 
@@ -128,10 +168,10 @@ class settings {
 			setcookie("sN",$settingNames);
 		}
 	}
-	public static function releaseSettings(){
+	public function releaseSettings(){
 
 		//gathering names of all the cookies
-		$settings = self::getCookieNames();
+		$settings = $this->getCookieNames();
 
 		//releasing all cookies
 		foreach($settings AS $setting){
@@ -141,9 +181,9 @@ class settings {
 		//releasing cookie name cookie
 		setcookie("sN",0,time()-1000);
 	}
-	public static function saveSettings(){
+	public function saveSettings(){
 
-		$settingsArray = self::getCookieValues();
+		$settingsArray = $this->getCookieValues();
 
 		//settings file
 		$file = "_config/_settings/settings.inc.txt";
@@ -163,53 +203,24 @@ class settings {
 			fclose($file);
 		}
 	}
-	public static function updateCookies($name,$value){
-
-			//checking if cookie is last modified
-			if($name == "SettingsLastModified"){
-
-				//if so setting value to current timestamp
-				$value = date("d-M-y H:i:s T",time());
-			} 
-
-			//setting cookie value
-			setcookie($name,$value,0);
-	}
-	public static function showSettings(){
+	public function showSettings(){
 		$settings = explode(chr(59),$_COOKIE["sN"]);
 
 		foreach ($settings as $setting) {
 			echo "<p><strong>" . $setting . ":</strong> " . $_COOKIE[$setting] . "</p>";
 		}
 	}
-	public static function formatDateSettings($name,$value){
-		
-		//presetting return value
-		$value = $value;
-
-		//cookies that will require formatting
-		$dateFormatting = array("SettingsLastModified","ApplicationCreationDate","LastApplicationUpdate","PreviousLogin");
-
-		//if cookie is version then do not run time processing 
-		if(in_array($name,$dateFormatting)){
-			//setting value to cookie value
-			$time = strtotime($value);
-			
-			//acceptable format for writing
-			$value = date("d-M-y H:i:s T",$time);
-		}
-		
-		return $value;
-	}
-	public static function controlPanelDisplay(){
+	public function controlPanelDisplay(){
 		//fields that should be disabled
 		$disabledFields = array("SettingsLastModified","ApplicationCreationDate","LastApplicationUpdate","LastUserLogin","ApplicationVersion");
 
 		$a = array();
 
-		$settings = self::getCookieNames();
+		$settings = $this->getCookieNames();
 
 		foreach($settings AS $setting){
+
+			$cookieValue = $_COOKIE[$setting];
 
 			//setting diasbled form element variable 
 			if(in_array($setting,$disabledFields)){
@@ -218,6 +229,27 @@ class settings {
 				$disable = "";
 			}
 
+			//checking status of setting
+
+			if($cookieValue == 'on'){
+				$checkedon = " checked ";
+				$checkedoff = "";
+			} else {
+				$checkedon = "";
+				$checkedoff = " checked ";
+			}
+
+			//checking input type
+
+			if(in_array($setting,$this->tfSettings)){
+				$input = "
+				<input type=\"radio\" ". $checkedon . " name=\"" . $setting . "\" value=\"on\">ON <br/>
+				<input type=\"radio\" ". $checkedoff . " name=\"" . $setting . "\" value=\"off\">OFF";
+			} else {
+				$input = "<input type=\"hidden\" name=\"" . $setting . "\" value=\"" . $_COOKIE[$setting] . "\"><input type=\"text\" class=\"form-control\"" . $disable . " name=\"" . $setting . "visible\" value=\"" . $_COOKIE[$setting] . "\">";
+			}
+			
+
 			//fixing the spacing on the cookie names
 			$spaced = trim(preg_replace('/([A-Z])/', ' $1', $setting));
 
@@ -225,15 +257,34 @@ class settings {
 			<div class=\"col-md-12 panel-body\">
 				<div class=\"col-md-6\">
 					<label class=\"form-label\" for=\"" . $setting . "\">" . $spaced . "</label>
-					<div class=\"help-block\"><span>Suggestion</span></div>
+				<div class=\"help-block\">
+					<span>Warning: This will log out your session</span>
 				</div>
-				<div class=\"col-md-6\">
-					<input type=\"text\" class=\"form-control\" " . $disable . " name=\"" . $setting . "\" value=\"" . $_COOKIE[$setting] . "\">
+				</div>
+				<div class=\"col-md-6\">"
+					. $input . "
 				</div>
 			</div>";
 
 			array_push($a,$v);
 		}
+
+		//finishing off form and adding submit to array
+		$submitButton = "
+		<div class=\"col-md-12 panel-body\">
+			<div class=\"col-md-6 col-md-offset-3\">
+				<input type=\"hidden\" name=\"updateCore\" value=\"true\">
+				<input type=\"submit\" value=\"Update Settings\" class=\"form-control btn btn-success\">
+			</div>
+			<div class=\"clearfix\"></div><br>
+			<div class=\"col-md-6 col-md-offset-3 alert-warning alert\">
+				<span class=\"alert-body\">Warning: This will log out your session</span>
+			</div>
+		</div>
+		<div class=\"clearfix\"></div>
+		<br>";
+
+		array_push($a,$submitButton);
 		
 		return implode("",$a);
 	}

@@ -1,4 +1,13 @@
 <?php /* FILEVERSION: v1.0.2b */ ?>
+<?php
+
+$settings = new settings;
+
+if(isset($_POST["updateCore"])){
+	$settings->coreSubmissionUpdate();
+	header('Location: index.php?p=cpnl');
+}
+?>
 <!doctype html>
 <html><head>
 
